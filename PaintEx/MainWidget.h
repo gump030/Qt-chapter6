@@ -8,6 +8,7 @@
 #include <qgridlayout.h>
 //#include <QGradient>
 #include "paintarea.h"
+#include "qcolordialog.h"
 
 class MainWidget : public QWidget
 {

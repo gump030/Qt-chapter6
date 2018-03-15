@@ -69,7 +69,7 @@ MainWidget::MainWidget(QWidget *parent)
 	fillRuleComboBox = new QComboBox;
 	fillRuleComboBox->addItem(tr("OddEvenFill"), Qt::OddEvenFill);
 	fillRuleComboBox->addItem(tr("WindingFill"), Qt::WindingFill);
-	connect(fillRuleComboBox, SIGNAL(activated(int)), this, SLOT(ShowFillRule(int)));
+	connect(fillRuleComboBox, SIGNAL(activated(int)), this, SLOT(ShowFillRule()));
 
 	brushColorLabel = new QLabel(tr("»­Ë¢ÑÕÉ«£º"));
 	brushColorFrame = new QFrame;
@@ -140,8 +140,8 @@ MainWidget::MainWidget(QWidget *parent)
 	rightLayout->addWidget(brushColorLabel, 8, 0);
 	rightLayout->addWidget(brushColorFrame, 8, 1);
 	rightLayout->addWidget(brushColorBtn, 8, 2);
-	rightLayout->addWidget(shapeLabel, 9, 0);
-	rightLayout->addWidget(shapeLabel, 9, 1);
+	rightLayout->addWidget(brushStyleLabel, 9, 0);
+	rightLayout->addWidget(brushStyleComboBox, 9, 1);
 
 	QHBoxLayout *mainLayout = new QHBoxLayout(this);
 	mainLayout->addWidget(paintArea);
@@ -150,30 +150,64 @@ MainWidget::MainWidget(QWidget *parent)
 	mainLayout->setStretchFactor(rightLayout, 0);
 
 	ShowShape(shapeComboBox->currentIndex());
+	ShowBrush(brushStyleComboBox->currentIndex());
 }
 
-void MainWidget::ShowShape(int)
+void MainWidget::ShowShape(int value)
 {
-}
-
-void MainWidget::ShowPenWidth(int) 
-{
+	PaintArea::Shape shape = PaintArea::Shape(shapeComboBox->itemData(value, Qt::UserRole).toInt());
+	paintArea->setShape(shape);
 }
 
 void MainWidget::ShowPenColor()
 {
+	QColor color = QColorDialog::getColor(static_cast<int>(Qt::blue));
+	penColorFrame->setPalette(QPalette(color));
+	int value = penWidthSpinBox->value();
+	Qt::PenStyle style = Qt::PenStyle(penStyleComboBox->itemData(penStyleComboBox->currentIndex(), Qt::UserRole).toInt());
+	Qt::PenCapStyle cap = Qt::PenCapStyle(penCapComboBox->itemData(penCapComboBox->currentIndex(), Qt::UserRole).toInt());
+	Qt::PenJoinStyle join = Qt::PenJoinStyle(penJoinComboBox->itemData(penJoinComboBox->currentIndex(), Qt::UserRole).toInt());
+	paintArea->setPen(QPen(color, value, style, cap, join));
+}
+
+void MainWidget::ShowPenWidth(int)
+{
+	QColor color = penColorFrame->palette().color(QPalette::Window);
+	int value = penWidthSpinBox->value();
+	Qt::PenStyle style = Qt::PenStyle(penStyleComboBox->itemData(penStyleComboBox->currentIndex(), Qt::UserRole).toInt());
+	Qt::PenCapStyle cap = Qt::PenCapStyle(penCapComboBox->itemData(penCapComboBox->currentIndex(), Qt::UserRole).toInt());
+	Qt::PenJoinStyle join = Qt::PenJoinStyle(penJoinComboBox->itemData(penJoinComboBox->currentIndex(), Qt::UserRole).toInt());
+	paintArea->setPen(QPen(color, value, style, cap, join));
 }
 
 void MainWidget::ShowPenCap(int)
 {
+	QColor color = penColorFrame->palette().color(QPalette::Window);
+	int value = penWidthSpinBox->value();
+	Qt::PenStyle style = Qt::PenStyle(penStyleComboBox->itemData(penStyleComboBox->currentIndex(), Qt::UserRole).toInt());
+	Qt::PenCapStyle cap = Qt::PenCapStyle(penCapComboBox->itemData(penCapComboBox->currentIndex(), Qt::UserRole).toInt());
+	Qt::PenJoinStyle join = Qt::PenJoinStyle(penJoinComboBox->itemData(penJoinComboBox->currentIndex(), Qt::UserRole).toInt());
+	paintArea->setPen(QPen(color, value, style, cap, join));
 }
 
 void MainWidget::ShowPenStyle(int)
 {
+	QColor color = penColorFrame->palette().color(QPalette::Window);
+	int value = penWidthSpinBox->value();
+	Qt::PenStyle style = Qt::PenStyle(penStyleComboBox->itemData(penStyleComboBox->currentIndex(), Qt::UserRole).toInt());
+	Qt::PenCapStyle cap = Qt::PenCapStyle(penCapComboBox->itemData(penCapComboBox->currentIndex(), Qt::UserRole).toInt());
+	Qt::PenJoinStyle join = Qt::PenJoinStyle(penJoinComboBox->itemData(penJoinComboBox->currentIndex(), Qt::UserRole).toInt());
+	paintArea->setPen(QPen(color, value, style, cap, join));
 }
 
 void MainWidget::ShowPenJoin(int)
 {
+	QColor color = penColorFrame->palette().color(QPalette::Window);
+	int value = penWidthSpinBox->value();
+	Qt::PenStyle style = Qt::PenStyle(penStyleComboBox->itemData(penStyleComboBox->currentIndex(), Qt::UserRole).toInt());
+	Qt::PenCapStyle cap = Qt::PenCapStyle(penCapComboBox->itemData(penCapComboBox->currentIndex(), Qt::UserRole).toInt());
+	Qt::PenJoinStyle join = Qt::PenJoinStyle(penJoinComboBox->itemData(penJoinComboBox->currentIndex(), Qt::UserRole).toInt());
+	paintArea->setPen(QPen(color, value, style, cap, join));
 }
 
 void MainWidget::ShowSpreadStyle()
@@ -182,12 +216,51 @@ void MainWidget::ShowSpreadStyle()
 
 void MainWidget::ShowFillRule()
 {
+	Qt::FillRule rule = Qt::FillRule(fillRuleComboBox->itemData(fillRuleComboBox->currentIndex(), Qt::UserRole).toInt());
+	paintArea->setFillRule(rule);
 }
 
 void MainWidget::ShowBrushColor()
 {
+	QColor color = QColorDialog::getColor(static_cast<int>(Qt::blue));
+	brushColorFrame->setPalette(QPalette(color));
+	ShowBrush(brushStyleComboBox->currentIndex());
 }
 
-void MainWidget::ShowBrush(int)
+void MainWidget::ShowBrush(int value)
 {
+	QColor color = brushColorFrame->palette().color(QPalette::Window);
+	Qt::BrushStyle style = Qt::BrushStyle(brushStyleComboBox->itemData(value, Qt::UserRole).toInt());
+	if (style == Qt::LinearGradientPattern)
+	{
+		QLinearGradient linearGradient(0, 0, 400, 400);
+		linearGradient.setColorAt(0.0, Qt::white);
+		linearGradient.setColorAt(0.2, color);
+		linearGradient.setColorAt(1.0, Qt::black);
+		paintArea->setBrush(linearGradient);
+	}
+	else if (style == Qt::RadialGradientPattern)
+	{
+		QRadialGradient radialGradient(200, 200, 150, 150, 100);
+		radialGradient.setColorAt(0.0, Qt::white);
+		radialGradient.setColorAt(0.2, color);
+		radialGradient.setColorAt(1.0, Qt::black);
+		paintArea->setBrush(radialGradient);
+	}
+	else if (style == Qt::ConicalGradientPattern)
+	{
+		QConicalGradient conicalGradient(200, 200, 30);
+		conicalGradient.setColorAt(0.0, Qt::white);
+		conicalGradient.setColorAt(0.2, color);
+		conicalGradient.setColorAt(1.0, Qt::black);
+		paintArea->setBrush(conicalGradient);
+	}
+	else if (style == Qt::TexturePattern)
+	{
+		paintArea->setBrush(QBrush(QPixmap("226.png")));
+	}
+	else
+	{
+		paintArea->setBrush(QBrush(color, style));
+	}
 }

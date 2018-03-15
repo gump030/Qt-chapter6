@@ -6,7 +6,7 @@ PaintArea::PaintArea(QWidget *parent) :
 {
 	setPalette(QPalette(Qt::white));
 	setAutoFillBackground(true);	//设置窗体的背景色,白色
-	setMinimumSize(400, 400);
+	setMinimumSize(400, 400);		//设置最小大小
 }
 
 void PaintArea::setShape(Shape s)
@@ -43,7 +43,7 @@ void PaintArea::paintEvent(QPaintEvent *)
 
 	static const QPoint points[4] =	//创建一个QPoint的数组，包含四个点，为画多边形，多变线及点做准备
 	{
-		QPoint(150,100),
+		QPoint(150, 100),
 		QPoint(300, 150),
 		QPoint(350, 250),
 		QPoint(100, 300)
@@ -81,7 +81,7 @@ void PaintArea::paintEvent(QPaintEvent *)
 	case Text:		//文字
 		p.drawText(rect, Qt::AlignCenter, tr("Hello Qt!")); break;
 	case Pixmap:	//图片
-		p.drawPixmap(150, 150, QPixmap("225.png")); break;
+		p.drawPixmap(0, 0, QPixmap("226.png")); break;
 	default:	break;
 	}
 }
